@@ -38,11 +38,12 @@ let $boolQuery_b := some $s in $student, $t in $transcript
 (:) All students named “John  Smith” has taken the course “CS 530”
 (must be in Transcipts)
 :)
-let $boolQuery_c := some $s in $student, $t in $transcript
-					satisfies ($s.name = "John Smith" and
+
+let $boolQuery_c :=  12 (: for $s in $student
+					where($s.name = "John Smith")  and (where $t in $transcript satisfies(
 								$t.ssn = $s.ssn and
 							   $t.dcode = "CS" and
-							   $t.cno = 530)
+							   $t.cno = 530) :)
 
 (:The student with ssn = 82  has satisfied all prerequisites for each
 class she is enrolled in.
@@ -66,9 +67,7 @@ let $boolQuery_d :=  some $e in $enrollment, $s in $student
                         ) else true
                         )
 
-
-
-let $boolQuery_e :=every $e in $enrollment
+let $boolQuery_e := every $e in $enrollment
 satisfies (every $cl in $class,
                             $p in $prereq
                 satisfies if($e.class = $cl.class and
@@ -100,13 +99,16 @@ let $boolQuery_l := "tbd"
 [  { ssn: ..., name: ..., major: ..., status: ... }, ... ]
 :)
 let $dataQuery_a := [
+
 let $ssn_cs530 := (
                    for $t in $transcript
-                   where $t.dcode = "CS" and $t.cno = 530
-         return $t.ssn
+                   where $t.dcode = "CS" and $t.cno = 530        
+                  return $t.ssn
          )
 
-         for $s in $student, $n in $ssn_cs530
+        let $uniq := distinct-values($ssn_cs530) 
+         
+        for $s in $student, $n in $uniq
          where $s.ssn = $n
          return {
            ssn: $s.ssn,
@@ -114,18 +116,55 @@ let $ssn_cs530 := (
                      major: $s.major,
                      status: $s.status
          }
+   
 ]
 (: returns an array of objects
 [  { ssn: ..., name: ..., major: ..., status: ... }, ... ]
 :)
 let $dataQuery_b := [
-  "tbd"
+  
+let $ssn_cs530 := (
+                   for $t in $transcript, $s in $student
+                   where $t.ssn = $s.ssn and $s.name = "John"      
+                  return $t.ssn
+         )
+
+        let $uniq := distinct-values($ssn_cs530) 
+         
+        for $s in $student, $n in $uniq
+         where $s.ssn = $n
+         return {
+                  ssn: $s.ssn,
+                     name: $s.name,
+                     major: $s.major,
+                     status: $s.status
+         }
+         
 ]
 (: returns an array of objects
 [  { ssn: ..., name: ..., major: ..., status: ... }, ... ]
 :)
 let $dataQuery_c := [
-  "tbd"
+
+  let $ssn_cs530 := (
+                   for $e in $enrollment, $t in $transcript, $p in $prereq, $c in $class
+                   where $e.class = $c.class and $c.cno = $p.cno and $t.ssn = $e.ssn and $t.cno = $p.pno
+                  return $e.ssn
+         )
+
+        let $uniq := distinct-values($ssn_cs530) 
+         
+        for $s in $student, $n in $uniq
+         where $s.ssn = $n
+         return {
+                  ssn: $s.ssn,
+                     name: $s.name,
+                     major: $s.major,
+                     status: $s.status
+         }
+         
+
+ 
 ]
 (: returns an array of objects
 [  { ssn: ..., name: ..., major: ..., status: ... }, ... ]
@@ -170,6 +209,8 @@ let $dataQuery_j := [
   "tbd"
 ]
 
+return {ans: $dataQuery_c}
+(:
 return {
   boolQuery_a: $boolQuery_a,
   boolQuery_b: $boolQuery_b,
@@ -194,4 +235,8 @@ return {
   dataQuery_i: $dataQuery_i,
   dataQuery_j: $dataQuery_j
 }
+:)
 };
+
+
+
