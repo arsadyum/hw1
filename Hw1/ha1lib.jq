@@ -89,9 +89,15 @@ let $boolQuery_i := "tbd"
 
 let $boolQuery_j := "tbd"
 
-let $boolQuery_k := "tbd"
+let $boolQuery_k := every $s in $student, $e in $enrollment, $cl in $class, $f in $faculty
+                      satisfies ( $e.class = $cl.class and $cl.instr = $f.ssn and $f.name = "Brodsky"
+                        and $s.major ="CS"
+                      )
 
-let $boolQuery_l := "tbd"
+let $boolQuery_l := some $s in $student, $e in $enrollment, $cl in $class, $f in $faculty
+                      satisfies ( $e.class = $cl.class and $cl.instr = $f.ssn and $f.name = "Brodsky"
+                        and $s.major ="CS"
+                      )
 
 (: now data queries; before each one there's a description of output structure :)
 
@@ -102,12 +108,12 @@ let $dataQuery_a := [
 
 let $ssn_cs530 := (
                    for $t in $transcript
-                   where $t.dcode = "CS" and $t.cno = 530        
+                   where $t.dcode = "CS" and $t.cno = 530
                   return $t.ssn
          )
 
-        let $uniq := distinct-values($ssn_cs530) 
-         
+        let $uniq := distinct-values($ssn_cs530)
+
         for $s in $student, $n in $uniq
          where $s.ssn = $n
          return {
@@ -116,21 +122,21 @@ let $ssn_cs530 := (
                      major: $s.major,
                      status: $s.status
          }
-   
+
 ]
 (: returns an array of objects
 [  { ssn: ..., name: ..., major: ..., status: ... }, ... ]
 :)
 let $dataQuery_b := [
-  
+
 let $ssn_cs530 := (
                    for $t in $transcript, $s in $student
-                   where $t.ssn = $s.ssn and $s.name = "John"      
+                   where $t.ssn = $s.ssn and $s.name = "John"
                   return $t.ssn
          )
 
-        let $uniq := distinct-values($ssn_cs530) 
-         
+        let $uniq := distinct-values($ssn_cs530)
+
         for $s in $student, $n in $uniq
          where $s.ssn = $n
          return {
@@ -139,21 +145,21 @@ let $ssn_cs530 := (
                      major: $s.major,
                      status: $s.status
          }
-         
+
 ]
 (: returns an array of objects
 [  { ssn: ..., name: ..., major: ..., status: ... }, ... ]
 :)
 let $dataQuery_c := [
 
-  let $ssn_cs530 := (
-                   for $e in $enrollment, $t in $transcript, $p in $prereq, $c in $class
+  let $data_ssn := (
+                   for $e in $enrollment, $t in $transcript, $p in $prereq, $c in $class 
                    where $e.class = $c.class and $c.cno = $p.cno and $t.ssn = $e.ssn and $t.cno = $p.pno
                   return $e.ssn
          )
 
-        let $uniq := distinct-values($ssn_cs530) 
-         
+        let $uniq := distinct-values($data_ssn)
+
         for $s in $student, $n in $uniq
          where $s.ssn = $n
          return {
@@ -162,9 +168,9 @@ let $dataQuery_c := [
                      major: $s.major,
                      status: $s.status
          }
-         
 
- 
+
+
 ]
 (: returns an array of objects
 [  { ssn: ..., name: ..., major: ..., status: ... }, ... ]
@@ -200,43 +206,40 @@ let $dataQuery_h := [
 [  { ssn: ..., name: ..., major: ..., status: ... }, ... ]
 :)
 let $dataQuery_i := [
-  "tbd"
+                for $s in $student, $t in $transcript
+                  where $s.ssn = $t.ssn
+                  and
+                        (every $t in $transcript
+                        satisfies $t.grade = "A" or  $t.grade = "B"  )
+                  return $s      
+                          
+        
 ]
 (: returns an array of objects
 [  { ssn: ..., name: ..., major: ..., status: ... }, ... ]
 :)
 let $dataQuery_j := [
-  "tbd"
+  
+  let $cs_students_ssn := for $e in $enrollment, $cl in $class, $f in $faculty
+                          where ($e.class = $cl.class and $cl.instr = $f.ssn and $f.name = "Brodsky")
+                          return $e.ssn  
+
+  for $s in $student, $ssn in $cs_students_ssn
+                        where ($s.ssn = $ssn and $s.major = "CS")
+                      return {
+                       ssn: $s.ssn,
+                        name: $s.name,
+                        major: $s.major,
+                        status: $s.status
+                      }
+    
+
 ]
 
 
-
 return {
-  boolQuery_a: $boolQuery_a,
-  boolQuery_b: $boolQuery_b,
-  boolQuery_c: $boolQuery_c,
-  boolQuery_d: $boolQuery_d,
-  boolQuery_e: $boolQuery_e,
-  boolQuery_f: $boolQuery_f,
-  boolQuery_g: $boolQuery_g,
-  boolQuery_h: $boolQuery_h,
-  boolQuery_i: $boolQuery_i,
-  boolQuery_j: $boolQuery_j,
-  boolQuery_k: $boolQuery_k,
-  boolQuery_l: $boolQuery_l,
-  dataQuery_a: $dataQuery_a,
-  dataQuery_b: $dataQuery_b,
-  dataQuery_c: $dataQuery_c,
-  dataQuery_d: $dataQuery_d,
-  dataQuery_e: $dataQuery_e,
-  dataQuery_f: $dataQuery_f,
-  dataQuery_g: $dataQuery_g,
-  dataQuery_h: $dataQuery_h,
-  dataQuery_i: $dataQuery_i,
-  dataQuery_j: $dataQuery_j
+   dataQuery_i: $dataQuery_i
 }
 
+
 };
-
-
-
