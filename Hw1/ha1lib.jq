@@ -208,7 +208,6 @@ let $dataQuery_h := [
 let $dataQuery_i := [
                 for $s in $student, $t in $transcript
                   where $s.ssn = $t.ssn
-                  and
                         (every $t in $transcript
                         satisfies $t.grade = "A" or  $t.grade = "B"  )
                   return $s      
@@ -238,7 +237,28 @@ let $dataQuery_j := [
 
 
 return {
-   dataQuery_i: $dataQuery_i
+  boolQuery_a: $boolQuery_a,
+  boolQuery_b: $boolQuery_b,
+  boolQuery_c: $boolQuery_c,
+  boolQuery_d: $boolQuery_d,
+  boolQuery_e: $boolQuery_e,
+  boolQuery_f: $boolQuery_f,
+  boolQuery_g: $boolQuery_g,
+  boolQuery_h: $boolQuery_h,
+  boolQuery_i: $boolQuery_i,
+  boolQuery_j: $boolQuery_j,
+  boolQuery_k: $boolQuery_k,
+  boolQuery_l: $boolQuery_l,
+  dataQuery_a: $dataQuery_a,
+  dataQuery_b: $dataQuery_b,
+  dataQuery_c: $dataQuery_c,
+  dataQuery_d: $dataQuery_d,
+  dataQuery_e: $dataQuery_e,
+  dataQuery_f: $dataQuery_f,
+  dataQuery_g: $dataQuery_g,
+  dataQuery_h: $dataQuery_h,
+  dataQuery_i: $dataQuery_i,
+  dataQuery_j: $dataQuery_j
 }
 
 
