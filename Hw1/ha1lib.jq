@@ -209,8 +209,8 @@ let $dataQuery_j := [
   "tbd"
 ]
 
-return {ans: $dataQuery_c}
-(:
+
+
 return {
   boolQuery_a: $boolQuery_a,
   boolQuery_b: $boolQuery_b,
@@ -235,7 +235,7 @@ return {
   dataQuery_i: $dataQuery_i,
   dataQuery_j: $dataQuery_j
 }
-:)
+
 };
 
 
